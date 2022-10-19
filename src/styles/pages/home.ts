@@ -29,7 +29,7 @@ export const Product = styled('a', {
     bottom: '0.25rem',
     left: '0.25rem',
     right: '0.25rem',
-    padding: '2rem',
+    padding: '1.5rem',
     borderRadius: 6,
     display: 'flex',
     alignItems: 'center',
@@ -40,15 +40,38 @@ export const Product = styled('a', {
     opacity: 0,
     transition: 'all 0.2s ease-in-out',
 
-    strong: {
-      fontSize: '$lg',
-      color: '$gray100'
+    div: {
+      strong: {
+        display: 'block',
+        fontSize: '$lg',
+        color: '$gray100'
+      },
+  
+      span: {
+        display: 'block',
+        fontSize: '$xl',
+        fontWeight: 'bold',
+        color: '$green300',
+        marginTop: 8,
+      }
     },
 
-    span: {
-      fontSize: '$xl',
-      fontWeight: 'bold',
-      color: '$green300'
+    button: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 0,
+      backgroundColor: '$green500',
+      color: '$white',
+      cursor: 'pointer',
+      border: 'none',
+      borderRadius: 6,
+      padding: 12,
+      transition: 'background-color 0.2s',
+
+      '&:hover': {
+        backgroundColor: '$green300'
+      }
     }
   },
 
