@@ -3,38 +3,37 @@ import { GetStaticPaths, GetStaticProps } from 'next'
 import Image from 'next/future/image'
 import { useState } from 'react'
 import Stripe from 'stripe'
+import { useShoppingCart, formatCurrencyString } from 'use-shopping-cart'
 import { stripe } from '../../lib/stripe'
 import * as S from '../../styles/pages/product'
 
+interface ProductData {
+  id: string
+  name: string
+  imageUrl: string
+  price: number
+  priceFormatted: string
+  priceId: string
+  description: string
+}
 interface ProductProps {
-  product: {
-    id: string
-    name: string
-    imageUrl: string
-    price: string
-    description: string
-    defaultPriceId: string
-  }
+  product: ProductData
 }
 
 export default function Product({product}:ProductProps) {
-  const [isCreatingChechoutSession, setIsCreatingChechoutSession] = useState(false)
+  const {cartDetails, addItem} = useShoppingCart()
 
-  async function handleBuyProduct(){
-    try {
-      setIsCreatingChechoutSession(true)
+  function handleAddItemToCart(product: ProductData){
+    if(cartDetails[product.id]) return () => {}
 
-      const response = await axios.post('/api/checkout', {
-        priceId: product.defaultPriceId
-      })
-
-      const {checkoutUrl} = response.data
-
-      window.location.href = checkoutUrl
-    } catch (err) {
-      setIsCreatingChechoutSession(false)
-      console.log(err)
-    }
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      price_id: product.priceId,
+      image: product.imageUrl,
+      currency: 'BRL'
+    })
   }
 
   return (
@@ -44,10 +43,12 @@ export default function Product({product}:ProductProps) {
       </S.ImageContainer>
       <S.ProductDetails>
         <h1>{product.name}</h1>
-        <span>{product.price}</span>
+        <span>{product.priceFormatted}</span>
         <p>{product.description}</p>
-        <button disabled={isCreatingChechoutSession} onClick={handleBuyProduct}>
-          Comprar agora
+        <button 
+          onClick={() => handleAddItemToCart(product)
+        }>
+          Colocar na sacola
         </button>
       </S.ProductDetails>
     </S.ProductContainer>
@@ -76,12 +77,14 @@ export const getStaticProps: GetStaticProps<any, {id: string}> = async({params})
         id: product.id,
         name: product.name,
         imageUrl: product.images[0],
-        price: Intl.NumberFormat('pt-br', {
-          style: 'currency',
+        price: price.unit_amount,
+        priceFormatted: formatCurrencyString({
           currency: 'BRL',
-        }).format(price.unit_amount / 100),
+          value: price.unit_amount,
+          language: 'pt-Br'
+        }),
         description: product.description,
-        defaultPriceId: price.id
+        priceId: price.id
       }
     },
     revalidate: 60 * 60 * 1 // 1 hora
