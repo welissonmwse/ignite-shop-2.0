@@ -1,7 +1,9 @@
 import { GetServerSideProps } from 'next'
 import Image from 'next/future/image'
 import Link from 'next/link'
+import { useEffect } from 'react'
 import Stripe from 'stripe'
+import { useShoppingCart } from 'use-shopping-cart'
 import { stripe } from '../lib/stripe'
 import * as S from '../styles/pages/success'
 
@@ -14,6 +16,12 @@ interface SuccessProps {
 }
 
 export default function Success({customerName, product}: SuccessProps) {
+  const {clearCart} = useShoppingCart()
+
+  useEffect(() => {
+    clearCart()
+  },[])
+
   return (
     <S.SuccessContainer>
       <h1>Compra efetuada!</h1>
