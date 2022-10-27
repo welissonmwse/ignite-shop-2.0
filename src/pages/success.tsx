@@ -9,13 +9,10 @@ import * as S from '../styles/pages/success'
 
 interface SuccessProps {
   customerName: string
-  product: {
-    name: string
-    imageUrl: string
-  }
+  imageUrls: string[]
 }
 
-export default function Success({customerName, product}: SuccessProps) {
+export default function Success({customerName, imageUrls = []}: SuccessProps) {
   const {clearCart} = useShoppingCart()
 
   useEffect(() => {
@@ -25,21 +22,18 @@ export default function Success({customerName, product}: SuccessProps) {
   return (
     <S.SuccessContainer>
       <S.ImageContainer>
-        <div>
-          <Image src={product.imageUrl} width={120} height={110} alt=""/>
-        </div>
-        <div>
-          <Image src={product.imageUrl} width={120} height={110} alt=""/>
-        </div>
-        <div>
-          <Image src={product.imageUrl} width={120} height={110} alt=""/>
-        </div>
+        {imageUrls.map((imageUrl) => (
+          <div key={imageUrl}>
+            <Image src={imageUrl} width={120} height={110} alt=""/>
+          </div>
+        ))}
+        
       </S.ImageContainer>
 
       <h1>Compra efetuada!</h1>
 
       <p>
-        Uhuul <strong>{customerName}</strong>, sua compra de 2 camisetas ja está a caminho da sua casa.
+        Uhuul <strong>{customerName}</strong>, sua compra de {imageUrls.length} camisetas já está a caminho da sua casa.
       </p>
       <Link href="/">
         <a>
@@ -67,15 +61,16 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
   })
 
   const customerName = session.customer_details.name
-  const product = session.line_items.data[0].price.product as Stripe.Product
+  const imageUrls = session.line_items.data.map(data => {
+    const product = data.price.product as Stripe.Product
+
+    return product.images[0]
+  })
 
   return {
     props: {
       customerName,
-      product: {
-        name: product.name,
-        imageUrl: product.images[0]
-      }
+      imageUrls
     }
   }
 }
