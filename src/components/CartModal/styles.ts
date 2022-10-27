@@ -119,6 +119,9 @@ export const ModalFooter = styled('footer', {
   },
 
   button: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
     margin: '3.5rem 0 1rem',
     background: '$green500',
@@ -126,6 +129,7 @@ export const ModalFooter = styled('footer', {
     border: 0,
     borderRadius: 8,
     padding: '1.25rem',
+    // padding: 8,
     cursor: 'pointer',
     fontWeight: 'bold',
     fontSize: '$md',
@@ -138,6 +142,11 @@ export const ModalFooter = styled('footer', {
 
     '&:not(:disabled):hover': {
       backgroundColor: '$green300'
+    },
+
+    div: {
+      margin: 0,
+      padding: 0,
     }
   }
 })
