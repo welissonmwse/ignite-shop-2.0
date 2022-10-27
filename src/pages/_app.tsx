@@ -3,7 +3,7 @@ import { CartProvider } from 'use-shopping-cart'
 import { globalStyles } from "../styles/global";
 import * as S from '../styles/pages/app'
 import { Header } from "../components/Header";
-
+import { ToastContainer } from 'react-toastify'
 globalStyles()
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -15,6 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
       stripe={stripeKey}
       currency="BRL"
     >
+      <ToastContainer autoClose={3000} theme="dark"/>
       <S.Container>
         <Header />
         <Component {...pageProps} />

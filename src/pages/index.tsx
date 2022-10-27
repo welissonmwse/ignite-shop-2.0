@@ -3,6 +3,7 @@ import { GetStaticProps } from "next"
 import Image from "next/future/image"
 import {useKeenSlider} from 'keen-slider/react'
 import { stripe } from "../lib/stripe"
+import { toast } from 'react-toastify'
 
 import * as S from "../styles/pages/home"
 
@@ -47,6 +48,8 @@ export default function Home({ products }: HomeProps) {
   function handleAddItemToCart(product: ProductData) {
     if (cartDetails[product.id]) return () => {}
     
+    toast.success('Produto adicionado com sucesso')
+
     addItem({
       currency: 'BRL',
       id: product.id,

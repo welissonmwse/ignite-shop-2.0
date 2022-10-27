@@ -1,8 +1,7 @@
-import axios from 'axios'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Image from 'next/future/image'
-import { useState } from 'react'
 import Stripe from 'stripe'
+import { toast } from 'react-toastify'
 import { useShoppingCart, formatCurrencyString } from 'use-shopping-cart'
 import { stripe } from '../../lib/stripe'
 import * as S from '../../styles/pages/product'
@@ -25,6 +24,8 @@ export default function Product({product}:ProductProps) {
 
   function handleAddItemToCart(product: ProductData){
     if(cartDetails[product.id]) return () => {}
+
+    toast.success('Produto adicionado com sucesso')
 
     addItem({
       id: product.id,
