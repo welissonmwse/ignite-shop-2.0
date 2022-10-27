@@ -5,6 +5,8 @@ import { toast } from 'react-toastify'
 import { useShoppingCart, formatCurrencyString } from 'use-shopping-cart'
 import { stripe } from '../../lib/stripe'
 import * as S from '../../styles/pages/product'
+import { useRouter } from 'next/router'
+import { ProductLoader } from '../../components/ProductLoader'
 
 interface ProductData {
   id: string
@@ -21,6 +23,7 @@ interface ProductProps {
 
 export default function Product({product}:ProductProps) {
   const {cartDetails, addItem} = useShoppingCart()
+  const { isFallback } = useRouter()
 
   function handleAddItemToCart(product: ProductData){
     if(cartDetails[product.id]) return () => {}
@@ -35,6 +38,10 @@ export default function Product({product}:ProductProps) {
       image: product.imageUrl,
       currency: 'BRL'
     })
+  }
+
+  if(isFallback){
+    return <ProductLoader />
   }
 
   return (
@@ -59,7 +66,7 @@ export default function Product({product}:ProductProps) {
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths:[],
-    fallback: 'blocking'
+    fallback: true
   }
 }
 
