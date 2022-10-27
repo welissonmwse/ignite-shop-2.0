@@ -15,10 +15,10 @@ export function Header(){
         <Image src={logoImg} alt="" />
       </Link>
       <Dialog.Root>
-        <Dialog.Trigger asChild>
+        <Dialog.Trigger asChild disabled={cartCount === 0}>
           <S.Bag>
             <Handbag size={20} weight="bold" />
-            <span>{ cartCount }</span>
+            {cartCount > 0 && <span>{ cartCount }</span>}
           </S.Bag>
         </Dialog.Trigger>
         <CartModal />

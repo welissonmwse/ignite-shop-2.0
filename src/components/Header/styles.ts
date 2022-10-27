@@ -1,4 +1,3 @@
-import * as Dialog from '@radix-ui/react-dialog'
 import { styled } from "../../styles";
 
 export const Header = styled('header', {
@@ -9,6 +8,10 @@ export const Header = styled('header', {
   width: '100%',
   maxWidth: 1180,
   margin: '0 auto',
+
+  img: {
+    cursor: 'pointer',
+  }
 })
 
 export const Bag = styled('button', {
