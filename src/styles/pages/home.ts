@@ -1,11 +1,16 @@
-import { styled } from "..";
+import { styled } from ".."
 
 export const HomeContainer = styled('main', {
   display: 'flex',
   width: '100%',
   maxWidth: 'calc(100vw - ((100vw - 1180px) / 2))',
   marginLeft: 'auto',
-  minHeight: 456
+  minHeight: 456,
+  position: 'relative',
+})
+
+export const SliderContainer = styled('div',{
+  width: '100%',
 })
 
 export const Product = styled('a', {

@@ -10,6 +10,8 @@ import 'keen-slider/keen-slider.min.css'
 import Link from "next/link"
 import { Handbag } from "phosphor-react"
 import { useShoppingCart, formatCurrencyString} from "use-shopping-cart"
+import { useState } from "react"
+import { Arrow } from "../components/Arrow"
 
 interface ProductData {
   name: string
@@ -25,11 +27,21 @@ interface HomeProps {
 
 export default function Home({ products }: HomeProps) {
   const { addItem, cartDetails } = useShoppingCart()
-  const [sliderRef] = useKeenSlider({
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [loaded, setLoaded] = useState(false)
+
+  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     slides: {
       perView: 3,
       spacing: 30,
-    }
+    },
+    initial: 0,
+    slideChanged(slider) {
+      setCurrentSlide(slider.track.details.rel)
+    },
+    created() {
+      setLoaded(true)
+    },
   })
 
   function handleAddItemToCart(product: ProductData) {
@@ -46,28 +58,52 @@ export default function Home({ products }: HomeProps) {
   }
 
   return (
-    <S.HomeContainer ref={sliderRef} className="keen-slider">
-      { products.map((product) => {
-        return (
-          <S.Product className="keen-slider__slide" key={product.id}>
-            <Link href={`/product/${product.id}`} prefetch={false}>
-              <Image src={product.imageUrl} width={520} height={480} alt="" />
-            </Link>
-            <footer>
-              <div>
-                <strong>{product.name}</strong>
-                <span>{product.priceFormatted}</span>
-              </div>
-              <button onClick={() => handleAddItemToCart(product)}>
-                <Handbag size={22} weight="bold" />
-              </button>
-            </footer>
-          </S.Product>
-        )
-      })}
+    <S.HomeContainer className="navigation-wrapper">
+      <S.SliderContainer ref={sliderRef} className="keen-slider">
+        { products.map((product, index) => {
+          return (
+            <S.Product className={`keen-slider__slide number-slide${index}`} number-slide key={product.id}>
+              <Link href={`/product/${product.id}`} prefetch={false}>
+                <Image src={product.imageUrl} width={520} height={480} alt="" />
+              </Link>
+              <footer>
+                <div>
+                  <strong>{product.name}</strong>
+                  <span>{product.priceFormatted}</span>
+                </div>
+                <button onClick={() => handleAddItemToCart(product)}>
+                  <Handbag size={22} weight="bold" />
+                </button>
+              </footer>
+            </S.Product>
+          )
+        })}
+      </S.SliderContainer>
+
+      {loaded && instanceRef.current && (
+        <>
+          <Arrow
+            left
+            onClick={(e: any) =>
+              e.stopPropagation() || instanceRef.current?.prev()
+            }
+            disabled={currentSlide === 0}
+          />
+
+          <Arrow
+            onClick={(e: any) =>
+              e.stopPropagation() || instanceRef.current?.next()
+            }
+            disabled={
+              currentSlide === instanceRef.current.track.details.slides.length - 1
+            }
+          />
+        </>
+      )}
     </S.HomeContainer>
   )
 }
+
 
 export const getStaticProps: GetStaticProps = async () => {
   const response = await stripe.products.list({
